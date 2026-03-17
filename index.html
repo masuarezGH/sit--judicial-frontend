@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIT Judicial - Mesa de Ayuda</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <h1>SIT JUDICIAL</h1>
+      <p>Mesa de Ayuda - Poder Judicial</p>
+
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Correo electrónico" required />
+        <input type="password" id="login-password" placeholder="Contraseña" required />
+        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+      </form>
+
+      <p id="login-error" class="error-text"></p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>SIT JUDICIAL</h2>
+        <small>Gestión 360° Integrada</small>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-item active" data-view="dashboard">📊 Dashboard</button>
+        <button class="nav-item" data-view="inventario">💻 Inventario</button>
+        <button class="nav-item" data-view="tickets">🎧 Tickets</button>
+        <button class="nav-item" data-view="contratos">📜 Contratos</button>
+        <button class="nav-item admin-only" data-view="usuarios">🛡️ Seguridad / Usuarios</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p><strong id="user-name">Usuario</strong></p>
+        <button id="btn-open-password-modal" class="btn btn-outline btn-full">Cambiar contraseña</button>
+        <p>Rol: <span id="user-role">-</span></p>
+        <button id="logout-btn" class="btn btn-danger btn-full">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="view-title">Dashboard</h2>
+      </header>
+
+      <section class="content">
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="view active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3 id="dash-open">0</h3>
+              <p>Tickets abiertos</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="dash-closed">0</h3>
+              <p>Tickets cerrados</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="dash-high">0</h3>
+              <p>Alta prioridad</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="dash-contracts">0</h3>
+              <p>Contratos urgentes</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Tickets recientes</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Asunto</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                  <th>Técnico</th>
+                </tr>
+              </thead>
+              <tbody id="recent-tickets-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+<!-- INVENTARIO -->
+<div id="inventario" class="view">
+  <div class="view-header">
+    <h3>Inventario de Activos</h3>
+
+    <div class="action-buttons op-admin-only">
+      <button id="btn-open-hardware-modal" class="btn btn-primary">+ Nuevo hardware</button>
+      <button id="btn-open-software-modal" class="btn btn-outline">+ Nuevo software</button>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom: 20px;">
+    <div class="stats-grid" style="margin-bottom: 0;">
+      <div class="stat-card">
+        <h3 id="hardware-count">0</h3>
+        <p>Hardware</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="software-count">0</h3>
+        <p>Software</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="activos-operativos-count">0</h3>
+        <p>Operativos</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="activos-baja-count">0</h3>
+        <p>Dados de baja</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="view-header" style="margin-bottom: 12px;">
+      <h4>Hardware</h4>
+      <div style="display:flex; gap:12px; align-items:end;">
+        <div>
+          <label for="hardware-search">Buscar hardware</label>
+          <input type="text" id="hardware-search" placeholder="ID, tipo, marca, modelo..." />
+        </div>
+        <div>
+          <label for="hardware-estado-filter">Estado</label>
+          <select id="hardware-estado-filter">
+            <option value="">Todos</option>
+            <option value="Operativo">Operativo</option>
+            <option value="Falla">Falla</option>
+            <option value="Dado de Baja">Dado de Baja</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="inventario-tabla-contenedor">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="hardware-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top: 20px;">
+        <div class="view-header" style="margin-bottom: 12px;">
+          <h4>Software</h4>
+          <div style="display:flex; gap:12px; align-items:end;">
+            <div>
+              <label for="software-search">Buscar software</label>
+              <input type="text" id="software-search" placeholder="ID, tipo, marca, modelo..." />
+            </div>
+            <div>
+              <label for="software-estado-filter">Estado</label>
+              <select id="software-estado-filter">
+                <option value="">Todos</option>
+                <option value="Operativo">Operativo</option>
+                <option value="Falla">Falla</option>
+                <option value="Dado de Baja">Dado de Baja</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="inventario-tabla-contenedor">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Marca</th>
+                <th>Modelo / Licencia</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="software-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+        <!-- TICKETS -->
+        <div id="tickets" class="view">
+          <div class="view-header">
+            <h3>Gestión de Tickets</h3>
+            <button id="btn-open-ticket-modal" class="btn btn-primary op-admin-only">+ Nuevo ticket</button>
+          </div>
+
+          <div class="panel">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Activo</th>
+                  <th>Asunto</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                  <th>Técnico</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tickets-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CONTRATOS -->
+        <div id="contratos" class="view">
+          <div class="view-header">
+            <h3>Contratos</h3>
+            <button id="btn-open-contrato-modal" class="btn btn-primary op-admin-only">+ Nuevo contrato</button>
+          </div>
+          <div class="panel" style="margin-bottom: 20px;">
+            <div class="view-header">
+              <h4>Filtros de contratos</h4>
+              <div style="display:flex; gap:12px; align-items:end;">
+                <div>
+                  <label for="contratos-estado-filter">Estado</label>
+                  <select id="contratos-estado-filter">
+                    <option value="">Todos</option>
+                    <option value="Vigente">Vigente</option>
+                    <option value="Vencido">Vencido</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="contratos-alerta-filter">Alerta</label>
+                  <select id="contratos-alerta-filter">
+                    <option value="">Todas</option>
+                    <option value="URGENTE">URGENTE</option>
+                    <option value="POR VENCER">POR VENCER</option>
+                    <option value="SIN ALERTA">SIN ALERTA</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Proveedor</th>
+                  <th>Tipo</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Estado</th>
+                  <th>Alerta</th>
+                </tr>
+              </thead>
+              <tbody id="contratos-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- USUARIOS -->
+        <div id="usuarios" class="view">
+          <div class="view-header">
+            <h3>Usuarios</h3>
+            <button id="btn-open-usuario-modal" class="btn btn-primary admin-only">+ Nuevo usuario</button>
+          </div>
+
+          <div class="panel">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Activo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="usuarios-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL ACTIVO -->
+  <div id="activo-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3 id="activo-modal-title">Nuevo activo</h3>
+
+    <form id="activo-form" class="form-grid">
+      <div>
+        <label for="activo-id">ID</label>
+        <input type="text" id="activo-id" placeholder="Se genera automáticamente" readonly required />
+      </div>
+
+      <div>
+        <label for="activo-categoria">Categoría</label>
+        <select id="activo-categoria" required>
+          <option value="HARDWARE">HARDWARE</option>
+          <option value="SOFTWARE">SOFTWARE</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="activo-tipo">Tipo</label>
+        <input type="text" id="activo-tipo" placeholder="Ej: PC Escritorio" required />
+      </div>
+
+      <div>
+        <label for="activo-marca">Marca</label>
+        <input type="text" id="activo-marca" placeholder="Ej: Dell / Microsoft" required />
+      </div>
+
+      <div>
+        <label for="activo-modelo" id="activo-modelo-label">Modelo</label>
+        <input type="text" id="activo-modelo" placeholder="Ej: Optiplex 3080" required />
+      </div>
+
+      <div>
+        <label for="activo-serie" id="activo-serie-label">Número de serie</label>
+        <input type="text" id="activo-serie" placeholder="Ej: SN123456" />
+      </div>
+
+      <div class="full-width" id="activo-juzgado-container">
+        <label for="activo-juzgado">Juzgado</label>
+        <input type="text" id="activo-juzgado" placeholder="Ej: Civil 1" />
+      </div>
+
+      <div class="full-width" id="activo-puesto-container">
+        <label for="activo-puesto">Puesto de trabajo</label>
+        <input type="text" id="activo-puesto" placeholder="Ej: Mesa 3" />
+      </div>
+
+      <div class="full-width">
+        <label for="activo-contrato">Contrato</label>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <select id="activo-contrato">
+            <option value="">Sin contrato</option>
+          </select>
+          <button type="button" id="btn-crear-contrato-desde-activo" class="btn btn-outline">+ Crear contrato</button>
+        </div>
+      </div>
+
+      <div class="modal-actions full-width">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-outline" data-close="activo-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- MODAL TICKET -->
+  <div id="ticket-modal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Nuevo ticket</h3>
+      <form id="ticket-form" class="form-grid">
+        <input type="text" id="ticket-id" placeholder="Se genera automáticamente" readonly required />
+        <div>
+        <label for="ticket-activo-id">Activo</label>
+        <select id="ticket-activo-id" required>
+          <option value="">Seleccionar activo</option>
+        </select>
+      </div>
+        <input type="text" id="ticket-asunto" placeholder="Asunto" required class="full-width" />
+        <textarea id="ticket-descripcion" placeholder="Descripción" class="full-width"></textarea>
+        <label for="ticket-prioridad">Prioridad</label>
+        <select id="ticket-prioridad">
+          <option value="Baja">Baja</option>
+          <option value="Media" selected>Media</option>
+          <option value="Alta">Alta</option>
+        </select>
+        <label for="ticket-estado">Estado</label>
+        <select id="ticket-estado">
+          <option value="Abierto" selected>Abierto</option>
+          <option value="En Proceso">En Proceso</option>
+          <option value="Cerrado">Cerrado</option>
+        </select>
+        <div>
+          <label for="ticket-tecnico">Técnico asignado</label>
+          <select id="ticket-tecnico">
+            <option value="">Sin asignar</option>
+          </select>
+        </div>
+        <div class="modal-actions full-width">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          <button type="button" class="btn btn-outline" data-close="ticket-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CONTRATO -->
+  <div id="contrato-modal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Nuevo contrato</h3>
+      <form id="contrato-form" class="form-grid">
+        <input type="text" id="contrato-id" placeholder="Se genera automáticamente" readonly required />
+        <input type="text" id="contrato-proveedor" placeholder="Proveedor" required />
+        <input type="text" id="contrato-tipo" placeholder="Tipo" required />
+        <div>
+            <label for="contrato-inicio">Fecha de inicio</label>
+            <input type="date" id="contrato-inicio" required />
+            </div>
+
+            <div>
+            <label for="contrato-fin">Fecha de fin</label>
+            <input type="date" id="contrato-fin" required />
+        </div>
+        <select id="contrato-estado">
+          <option value="Vigente">Vigente</option>
+        </select>
+        <div class="modal-actions full-width">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          <button type="button" class="btn btn-outline" data-close="contrato-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL USUARIO -->
+  <div id="usuario-modal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Nuevo usuario</h3>
+      <form id="usuario-form" class="form-grid">
+        <input type="text" id="usuario-nombre" placeholder="Nombre" required />
+        <input type="email" id="usuario-email" placeholder="Email" required />
+        <input type="password" id="usuario-password" placeholder="Password" required />
+        <select id="usuario-rol">
+          <option value="ADMIN">ADMIN</option>
+          <option value="OPERADOR">OPERADOR</option>
+          <option value="TECNICO">TECNICO</option>
+        </select>
+        <div class="modal-actions full-width">
+          <button type="submit" class="btn btn-success">Guardar</button>
+          <button type="button" class="btn btn-outline" data-close="usuario-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="historial-modal" class="modal hidden">
+  <div class="modal-card modal-large historial-modal-card">
+    <div class="modal-header-sticky">
+      <h3>Historial del activo</h3>
+      <button type="button" class="btn btn-outline" data-close="historial-modal">Cerrar</button>
+    </div>
+
+    <div class="modal-scroll-content">
+      <div id="historial-info" class="historial-info"></div>
+
+      <div class="panel">
+        <h4>Eventos del historial</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Evento</th>
+            </tr>
+          </thead>
+          <tbody id="historial-body"></tbody>
+        </table>
+      </div>
+
+      <div class="panel" style="margin-top: 16px;">
+        <h4>Tickets asociados</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Asunto</th>
+              <th>Prioridad</th>
+              <th>Estado</th>
+              <th>Técnico</th>
+            </tr>
+          </thead>
+          <tbody id="historial-tickets-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+  </div>
+</div>
+<div id="ticket-detail-modal" class="modal hidden">
+  <div class="modal-card modal-large ticket-detail-modal-card">
+    <div class="modal-header-sticky">
+      <h3 id="ticket-detail-title">Detalle de ticket</h3>
+      <button type="button" class="btn btn-outline" data-close="ticket-detail-modal">Cerrar</button>
+    </div>
+
+    <div class="modal-scroll-content">
+      <form id="ticket-detail-form" class="form-grid">
+        <div>
+          <label for="ticket-detail-id">ID</label>
+          <input type="text" id="ticket-detail-id" readonly />
+        </div>
+
+        <div>
+          <label for="ticket-detail-activo">Activo</label>
+          <input type="text" id="ticket-detail-activo" readonly />
+        </div>
+
+        <div class="full-width">
+          <label for="ticket-detail-asunto">Asunto</label>
+          <input type="text" id="ticket-detail-asunto" />
+        </div>
+
+        <div class="full-width">
+          <label for="ticket-detail-descripcion">Descripción del operador</label>
+          <textarea id="ticket-detail-descripcion"></textarea>
+        </div>
+
+        <div class="full-width">
+          <label for="ticket-detail-bitacora">Bitácora técnica</label>
+          <textarea id="ticket-detail-bitacora" placeholder="Registrar pasos realizados por el técnico..."></textarea>
+        </div>
+
+        <div>
+          <label for="ticket-detail-prioridad">Prioridad</label>
+          <select id="ticket-detail-prioridad">
+            <option value="Baja">Baja</option>
+            <option value="Media">Media</option>
+            <option value="Alta">Alta</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="ticket-detail-estado">Estado</label>
+          <select id="ticket-detail-estado">
+            <option value="Abierto">Abierto</option>
+            <option value="En Proceso">En Proceso</option>
+            <option value="Cerrado">Cerrado</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="ticket-detail-tecnico">Técnico asignado</label>
+          <select id="ticket-detail-tecnico">
+            <option value="">Sin asignar</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="ticket-detail-tecnico-nombre">Nombre técnico</label>
+          <input type="text" id="ticket-detail-tecnico-nombre" readonly />
+        </div>
+
+        <div>
+          <label for="ticket-detail-fecha-creacion">Fecha de creación</label>
+          <input type="text" id="ticket-detail-fecha-creacion" readonly />
+        </div>
+
+        <div>
+          <label for="ticket-detail-fecha-cierre">Fecha de cierre</label>
+          <input type="text" id="ticket-detail-fecha-cierre" readonly />
+        </div>
+
+        <div class="modal-actions full-width">
+          <button id="ticket-detail-save-btn" type="submit" class="btn btn-primary">Guardar cambios</button>
+          <button id="ticket-detail-close-btn" type="button" class="btn btn-success">Cerrar ticket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="password-modal" class="modal hidden">
+  <div class="modal-card">
+    <h3>Cambiar contraseña</h3>
+    <form id="password-form" class="form-grid">
+      <div class="full-width">
+        <label for="password-actual">Contraseña actual</label>
+        <input type="password" id="password-actual" required />
+      </div>
+
+      <div class="full-width">
+        <label for="password-nueva">Nueva contraseña</label>
+        <input type="password" id="password-nueva" required />
+      </div>
+
+      <div class="full-width">
+        <label for="password-confirmar">Confirmar nueva contraseña</label>
+        <input type="password" id="password-confirmar" required />
+      </div>
+
+      <div class="modal-actions full-width">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-outline" data-close="password-modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+  <script src="app.js"></script>
+</body>
+</html>
