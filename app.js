@@ -22,7 +22,7 @@ function api(path, options = {}) {
   };
 
   if (state.token) {
-    headers.Authorization = `Bearer ${state.token}`;
+    headers.Authorization = `Bearer ${state.token}`; 
   }
 
   return fetch(`${API_BASE_URL}${path}`, {
@@ -46,6 +46,7 @@ function showApp() {
   if (state.user?.rol === "ADMIN") {
     loadUsuarios();
   }
+  
 }
 
 function showLogin() {
